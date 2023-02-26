@@ -62,7 +62,7 @@ function listen(activityId) {
         return;
     }
     
-    const $activity = document.getElementById(`${activityId}-description`);
+    const $activity = document.querySelector(`#${activityId}-description > div`);
     const text = $activity.textContent;
 
     const speechData = new SpeechSynthesisUtterance();
