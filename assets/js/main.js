@@ -1,10 +1,7 @@
 
 function initialize(trip) {
-
     initializeMaps(trip);
-    initializeState(trip);
-    initializeSidebar();
-    initializeMoveToTop();   
+    initializeState(trip); 
 }
 
 function initializeMaps(trip) {
@@ -36,52 +33,6 @@ function initializeMaps(trip) {
         if (bounds.length > 0) {
             map.fitBounds(bounds, {padding: [50, 50]});
         }
-    });
-}
-
-
-function initializeSidebar() {
-
-    var $sidenav = document.getElementById('sidenav');
-    
-    M.Sidenav.init($sidenav, {});
-
-    initializeSidebarDayLinks($sidenav);
-}
-
-
-function initializeSidebarDayLinks($sidenav) {
-
-    var $dayLinks = document.querySelectorAll('.day-link');
-
-    var i;
-
-    for (i = 0 ; i < $dayLinks.length ; i++) {
-        
-        $dayLinks[i].addEventListener('click', function() {
-
-            setTimeout(function () {
-                window.scrollBy(0, -50);
-            }, 0);
-            
-            var sidenav = M.Sidenav.getInstance($sidenav);
-            
-            sidenav.close();
-        });
-    }
-}
-
-function initializeMoveToTop() {
-
-    var $btTop = document.getElementById('bt-top');
-
-    M.FloatingActionButton.init($btTop, {
-        direction: 'left',
-        hoverEnabled: false
-    });
-
-    $btTop.addEventListener('click', function() {
-        window.scrollTo(0, 0);
     });
 }
 
@@ -117,7 +68,7 @@ function initializeState(trip) {
 
 function initializeDayStateEvents() {
 
-    var $buttonsExpand = document.querySelectorAll('.btn-expand-day');
+    var $buttonsExpand = document.querySelectorAll('.expand-day');
 
     $buttonsExpand.forEach(function($button) {
         
@@ -133,28 +84,18 @@ function initializeDayStateEvents() {
 function toggleDayExpanded(dayId, expand) {
 
     var $day = document.getElementById(dayId);
-    var $dayTitle = document.getElementById(`${dayId}-title`);
-    var $btExpand = document.getElementById(`${dayId}-expand`);
-    var $icon = $btExpand.getElementsByTagName('i')[0];
 
     expand = expand !== undefined ? expand : !Store.isExpanded(dayId);
 
-    if (expand) {
-        $day.classList.remove('day-collapsed');
-        $dayTitle.classList.remove('day-collapsed');
-        $icon.textContent = 'expand_less';
-    } else {
-        $day.classList.add('day-collapsed');
-        $dayTitle.classList.add('day-collapsed');
-        $icon.textContent = 'expand_more';
-    }
+    if (expand) $day.setAttribute("open", "");
+    else $day.removeAttribute("open");
 
     Store.setExpanded(dayId, expand);
 }
 
 function initializeActivityStateEvents() {
 
-    var $buttonsExpand = document.querySelectorAll('.btn-expand');
+    var $buttonsExpand = document.querySelectorAll('.expand-activity');
 
     $buttonsExpand.forEach(function($button) {
         
@@ -163,10 +104,11 @@ function initializeActivityStateEvents() {
             toggleActivityExpanded($button.dataset.activity);
 
             e.preventDefault();
+            e.stopPropagation();
         });
     });
 
-    var $buttonsVisited = document.querySelectorAll('.btn-visited');
+    var $buttonsVisited = document.querySelectorAll('.mark-visited');
 
     $buttonsVisited.forEach(function($button) {
         
@@ -175,6 +117,7 @@ function initializeActivityStateEvents() {
             toggleActivityVisited($button.dataset.activity)
 
             e.preventDefault();
+            e.stopPropagation();
         });
     });
 }
@@ -182,18 +125,11 @@ function initializeActivityStateEvents() {
 function toggleActivityExpanded(activityId, expand) {
 
     var $activity = document.getElementById(activityId);
-    var $btExpand = document.getElementById(`${activityId}-expand`);
-    var $icon = $btExpand.getElementsByTagName('i')[0];
 
     expand = expand !== undefined ? expand : !Store.isExpanded(activityId);
 
-    if (expand) {
-        $activity.classList.remove('activity-collapsed');
-        $icon.textContent = 'expand_less';
-    } else {
-        $activity.classList.add('activity-collapsed');
-        $icon.textContent = 'expand_more';
-    }
+    if (expand) $activity.setAttribute("open", "");
+    else $activity.removeAttribute("open");
 
     Store.setExpanded(activityId, expand);
 }
