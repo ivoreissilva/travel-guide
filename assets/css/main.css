@@ -38,11 +38,13 @@ details article {
 
 i {
     vertical-align: middle;
+    margin-bottom: 2px;
 }
 
 kbd {
     margin-right: 5px;
     margin-bottom: 5px;
+    font-size: 0.7em;
 }
 
 .trip-title-wrapper {
@@ -96,6 +98,19 @@ div.leaflet-top.leaflet-left {
 
 .leaflet-bottom.leaflet-right {
     z-index: 990;
+}
+
+.activity-title {
+    --color: var(--h4-color);
+    margin-top: 0;
+    margin-bottom: var(--typography-spacing-vertical);
+    color: var(--color);
+    font-weight: var(--font-weight);
+    font-size: var(--font-size);
+    font-family: var(--font-family);
+    --font-size: 1.25rem;
+    --typography-spacing-vertical: 1.874rem;
+    --font-weight: 700;
 }
 
 .activity section {
