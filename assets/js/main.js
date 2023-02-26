@@ -1,16 +1,17 @@
 
 function initialize(trip) {
     initializeMaps(trip);
-    initializeState(trip); 
+    initializeState(trip);
+    initializeListen(trip);
 }
 
 function initializeMaps(trip) {
 
-    var days = trip.itinerary;
+    const days = trip.itinerary;
 
     days.forEach(function(day, i) {
 
-        var map = L.map('map-day-' + i).setView([0, 0], 13);
+        const map = L.map('map-day-' + i).setView([0, 0], 13);
 
         map.scrollWheelZoom.disable();
 
@@ -19,11 +20,11 @@ function initializeMaps(trip) {
             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        var bounds = [];
+        const bounds = [];
 
         day.activities.forEach(function(activity) {
 
-            var coordinates = [activity.coordinates.latitude, activity.coordinates.longitude];
+            const coordinates = [activity.coordinates.latitude, activity.coordinates.longitude];
 
             L.marker(coordinates).addTo(map);
 
@@ -36,13 +37,53 @@ function initializeMaps(trip) {
     });
 }
 
+let isSpeaking = false;
+
+function initializeListen(trip) {
+
+    const $buttonsListen = document.querySelectorAll('.listen');
+
+    $buttonsListen.forEach(function($button) {
+        
+        $button.addEventListener('click', function(e) {
+            
+            listen($button.dataset.activity);
+
+            e.preventDefault();
+        });
+    });
+}
+
+function listen(activityId) {
+
+    if (isSpeaking) {
+        speechSynthesis.cancel();
+        isSpeaking = false;
+        return;
+    }
+    
+    const $activity = document.getElementById(`${activityId}-description`);
+    const text = $activity.textContent;
+
+    const speechData = new SpeechSynthesisUtterance();
+
+    speechData.volume = 1;
+    speechData.rate = 0.9;
+    speechData.text = text;
+    speechData.lang = 'pt-PT';
+
+    speechSynthesis.speak(speechData);
+
+    isSpeaking = true;
+}
+
 function initializeState(trip) {
 
-    var days = trip.itinerary;
+    const days = trip.itinerary;
 
     days.forEach(function(day, i) {
 
-        var dayId = 'day-' + i;
+        const dayId = 'day-' + i;
 
         if (!Store.isExpandedDefault(dayId)) {
             toggleDayExpanded(dayId, Store.isExpanded(dayId));
@@ -50,7 +91,7 @@ function initializeState(trip) {
         
         day.activities.forEach(function(activity) {
 
-            var activityId = activity.uid;
+            const activityId = activity.uid;
 
             if (!Store.isExpandedDefault(activityId)) {
                 toggleActivityExpanded(activityId, Store.isExpanded(activityId));
@@ -68,7 +109,7 @@ function initializeState(trip) {
 
 function initializeDayStateEvents() {
 
-    var $buttonsExpand = document.querySelectorAll('.expand-day');
+    const $buttonsExpand = document.querySelectorAll('.expand-day');
 
     $buttonsExpand.forEach(function($button) {
         
@@ -83,7 +124,7 @@ function initializeDayStateEvents() {
 
 function toggleDayExpanded(dayId, expand) {
 
-    var $day = document.getElementById(dayId);
+    const $day = document.getElementById(dayId);
 
     expand = expand !== undefined ? expand : !Store.isExpanded(dayId);
 
@@ -95,7 +136,7 @@ function toggleDayExpanded(dayId, expand) {
 
 function initializeActivityStateEvents() {
 
-    var $buttonsExpand = document.querySelectorAll('.expand-activity');
+    const $buttonsExpand = document.querySelectorAll('.expand-activity');
 
     $buttonsExpand.forEach(function($button) {
         
@@ -108,7 +149,7 @@ function initializeActivityStateEvents() {
         });
     });
 
-    var $buttonsVisited = document.querySelectorAll('.mark-visited');
+    const $buttonsVisited = document.querySelectorAll('.mark-visited');
 
     $buttonsVisited.forEach(function($button) {
         
@@ -124,7 +165,7 @@ function initializeActivityStateEvents() {
 
 function toggleActivityExpanded(activityId, expand) {
 
-    var $activity = document.getElementById(activityId);
+    const $activity = document.getElementById(activityId);
 
     expand = expand !== undefined ? expand : !Store.isExpanded(activityId);
 
@@ -136,8 +177,8 @@ function toggleActivityExpanded(activityId, expand) {
 
 function toggleActivityVisited(activityId, visited) {
 
-    var $btVisited = document.getElementById(`${activityId}-visited`);
-    var $icon = $btVisited.getElementsByTagName('i')[0];
+    const $btVisited = document.getElementById(`${activityId}-visited`);
+    const $icon = $btVisited.getElementsByTagName('i')[0];
 
     visited = visited !== undefined ? visited : !Store.isVisited(activityId);
 
@@ -160,7 +201,7 @@ var Store = {
     },
 
     isExpanded: function(key) {
-        var isExpanded = localStorage.getItem(`${key}:expanded`);
+        const isExpanded = localStorage.getItem(`${key}:expanded`);
         return isExpanded === null || isExpanded === 'true';
     },
 

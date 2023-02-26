@@ -1,0 +1,14 @@
+
+.activity,
+article {
+    page-break-inside: avoid;
+}
+
+.day:not(:first-of-type) {
+    page-break-before: always;
+}
+
+.transport {
+    visibility: hidden;
+    display: none;
+}
